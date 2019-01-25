@@ -1,0 +1,8 @@
+matplotlib
+seaborn
+numpy
+pandas
+torchsummary
+torchvision
+torch
+tqdm
