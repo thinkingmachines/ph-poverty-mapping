@@ -7,3 +7,4 @@ torchvision
 torch
 tqdm
 google-cloud-storage
+ipykernel
