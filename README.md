@@ -10,10 +10,15 @@ Information"*, currently published in our
 In order to run the notebooks, all dependencies must be installed. We provided
 a `Makefile` to accomplish this task:
 
-```
+```s
 make venv
 make build
 ```
 
 This creates a virtual environment, `venv`, and installs all dependencies found
-in `requirements.txt`. 
+in `requirements.txt`. In order to run the notebooks inside `venv`, execute the
+following command:
+
+```s
+ipython kernel install --user --name=venv
+```
