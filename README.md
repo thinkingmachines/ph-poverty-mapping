@@ -40,10 +40,29 @@ following command:
 ipython kernel install --user --name=venv
 ```
 
+Notable dependencies include:
+- matplotlib==3.0.2
+- seaborn==0.9.0
+- numpy==1.16.0
+- pandas==0.24.0
+- torchsummary==1.5.1
+- torchvision==0.2.1
+- tqdm==4.30.0
+
 # Code Organization 
 
 This repository is divided into three main parts:
-- `./notebooks`: contains all Jupyter notebooks for the different wealth
+- `./notebooks`: contains all Jupyter notebooks for different wealth
     prediction models.
 - `./utils`: contains utility methods for loading datasets, building model, and
    performing training routines. 
+- `./src`: contains the transfer learning training script.
+
+It is possible to follow our experiments and reproduce the models we've built
+by going through the notebooks one-by-one. For model training, we leveraged a
+Google Compute Engine (GCE) instance with 
+
+
+
+
+
