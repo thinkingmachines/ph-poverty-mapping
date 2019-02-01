@@ -99,7 +99,21 @@ Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
 
 ## Models
 
+We developed five wealth prediction models from different data sources. You can
+follow-through our analysis by looking at the notebooks in the `notebooks/`
+directory.
 
+- **Survey Model** (`notebooks/01_survey_model.ipynb`): we extracted features
+    such as urban/rural classification, proportion of households with a
+    car/truck, avg. number of rooms used for sleeping, and etc. This model
+    serves as our baseline or "gold standard" against which other
+    remote-sensing based techniques will be compared.
+- **Nighttime Lights Transfer Learning Model** (`notebooks/02_lights_eda.ipynb`, `notebooks/03_lights_model.ipynb`): we used
+    a transfer learning approach proposed by Xie et al and Jean et al. The main
+    assumption here is that nighttime lights act as a good proxy for economic
+    activity. We first started with a Convolutional Neural Network (CNN)
+    pre-trained on ImageNet, and used the feature vectors into a ridge
+    regression model.
 
 ## Key Results
 
