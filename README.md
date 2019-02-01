@@ -139,6 +139,7 @@ features serve as a good previctor for socioeconomic well-being:
 
 <center>Cross-validated r-squared results for predicting cluster-level poverty
 measures across all levels</center>
+
 |                       | Survey | Lights | Transfer | OSM   | OSM + Lights |
 |-----------------------|--------|--------|----------|-------|--------------|
 | Wealth Index          | 0.789  | 0.563  | 0.593    | 0.591 | 0.619        |
