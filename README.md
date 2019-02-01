@@ -1,7 +1,5 @@
-# Philippine Poverty Mapping 
-
 <p align="center">
-<b><a href="#setup">Introduction</a></b>
+<b><a href="#setup">Setup</a></b>
 |
 <b><a href="#code-organization">Code Organization</a></b>
 |
@@ -23,7 +21,7 @@ All analyses, experimental code, and dependencies can be found in this repositor
 ![pampanga map](./assets/pampanga-map.jpg)
 
 
-## Setup
+# Setup
 
 In order to run the notebooks, all dependencies must be installed. We provided
 a `Makefile` to accomplish this task:
@@ -41,4 +39,4 @@ following command:
 ipython kernel install --user --name=venv
 ```
 
-## 
+# Code Organization 
