@@ -6,3 +6,4 @@ torchsummary
 torchvision
 torch
 tqdm
+google-cloud-storage
