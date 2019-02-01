@@ -12,6 +12,8 @@
 <b><a href="#acknowledgements">Acknowledgements</a></b>
 </p>
 
+# Philippine Poverty Mapping
+
 This repository accompanies our research work, *"Mapping Philippine Poverty
 using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial
 Information"*, currently published in our
@@ -22,7 +24,7 @@ state-of-the-art methods and various geospatial data sources.
 ![pampanga map](./assets/pampanga-map.jpg)
 
 
-# Setup
+## Setup
 
 In order to run the notebooks, all dependencies must be installed. We provided
 a `Makefile` to accomplish this task:
@@ -49,7 +51,7 @@ Notable dependencies include:
 - torchvision==0.2.1
 - tqdm==4.30.0
 
-# Code Organization 
+## Code Organization 
 
 This repository is divided into three main parts:
 - `./notebooks`: contains all Jupyter notebooks for different wealth
