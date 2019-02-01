@@ -108,12 +108,23 @@ directory.
     car/truck, avg. number of rooms used for sleeping, and etc. This model
     serves as our baseline or "gold standard" against which other
     remote-sensing based techniques will be compared.
-- **Nighttime Lights Transfer Learning Model** (`notebooks/02_lights_eda.ipynb`, `notebooks/03_lights_model.ipynb`): we used
+- **Nighttime Lights Transfer Learning Model** (`notebooks/04_transfer_model.ipynb`): we used
     a transfer learning approach proposed by Xie et al and Jean et al. The main
     assumption here is that nighttime lights act as a good proxy for economic
     activity. We first started with a Convolutional Neural Network (CNN)
     pre-trained on ImageNet, and used the feature vectors into a ridge
     regression model.
+- **Nighttime Lights Statistics Model** (`notebooks/02_lights_eda.ipynb`,
+    `notebooks/03_lights_model.ipynb`): in this model, we generated nighttime
+    light features consisting of summary statistics and histogram-based
+    features. We then compared the performance of three different machine
+    learning algorithms: ridge regression, random forest regressor, and
+    gradient boosting method (XGBoost).
+- **OpenStreetMaps (OSM) Model** (`notebooks/05_osm_model.ipynb`): we extracted three
+    types of OSM features, roads, buildings, and points-of-interests (POIs)
+    within a 5-km radius for rural areas and 2-km radius for urban areas. We
+    then trained a random forest regressor for these features.
+- **OpenStreetMaps (OSM) + Nighttime Lights (NTL)** ()
 
 ## Key Results
 
