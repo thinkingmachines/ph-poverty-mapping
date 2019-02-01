@@ -124,7 +124,11 @@ directory.
     types of OSM features, roads, buildings, and points-of-interests (POIs)
     within a 5-km radius for rural areas and 2-km radius for urban areas. We
     then trained a random forest regressor for these features.
-- **OpenStreetMaps (OSM) + Nighttime Lights (NTL)** ()
+- **OpenStreetMaps (OSM) + Nighttime Lights (NTL)**
+    (`notebooks/02_lights_eda.ipynb`, `notebooks/05_osm_model.ipynb`): we also
+    trained a random forest model combining OSM data and nighttime
+    lights-derived features as input. This is motivated by the assumption that
+    using features from mixed data sources will improve model performance.
 
 ## Key Results
 
