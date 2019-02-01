@@ -16,7 +16,8 @@ This repository accompanies our research work, *"Mapping Philippine Poverty
 using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial
 Information"*, currently published in our
 [website](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
-All analyses, experimental code, and dependencies can be found in this repository.
+In this work, **we developed five wealth prediction models** using
+state-of-the-art methods and various geospatial data sources.
 
 ![pampanga map](./assets/pampanga-map.jpg)
 
@@ -40,3 +41,9 @@ ipython kernel install --user --name=venv
 ```
 
 # Code Organization 
+
+This repository is divided into three main parts:
+- `./notebooks`: contains all Jupyter notebooks for the different wealth
+    prediction models.
+- `./utils`: contains utility methods for loading datasets, building model, and
+   performing training routines. 
