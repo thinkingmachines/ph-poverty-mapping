@@ -7,4 +7,13 @@ Information"*, currently published in our
 
 ## Setup
 
-In order to run the notebooks, 
+In order to run the notebooks, all dependencies must be installed. We provided
+a `Makefile` to accomplish this task:
+
+```
+make venv
+make build
+```
+
+This creates a virtual environment, `venv`, and installs all dependencies found
+in `requirements.txt`. 
