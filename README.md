@@ -137,8 +137,9 @@ To view the full results, please see our technical notes
 We found out that for the four models (excluding the survey model), OSM-based
 features serve as a good previctor for socioeconomic well-being:
 
-<center>Cross-validated r-squared results for predicting cluster-level poverty
-measures across all levels</center>
+<p align="center">
+**Cross-validated r-squared results for predicting cluster-level poverty
+measures across all levels**
 
 |                       | Survey | Lights | Transfer | OSM   | OSM + Lights |
 |-----------------------|--------|--------|----------|-------|--------------|
@@ -146,6 +147,8 @@ measures across all levels</center>
 | Education             | 0.605  | 0.427  | 0.440    | 0.459 | 0.481        |
 | Access to Electricity | 0.368  | 0.267  | 0.219    | 0.287 | 0.317        |
 | Access to Water       | 0.030  | 0.018  | 0.047    | 0.038 | 0.039        |
+
+</p>
 
 
 ## Acknowledgments
