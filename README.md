@@ -64,7 +64,21 @@ It is possible to follow our experiments and reproduce the models we've built
 by going through the notebooks one-by-one. For model training, we leveraged a
 Google Compute Engine (GCE) instance with 
 
+## Data Sources
 
+
+## Models
+
+
+## Key Results
+
+
+## Acknowledgments
+
+This work was supported by the [UNICEF Innovation
+Fund](https://unicefinnovationfund.org/). We would also like to thank Vedran
+Sekara, Do-Hyung Kim of UNICEF and Priscilla Moraes of Google for the
+insightful discussions and valuable mentorship.
 
 
 
