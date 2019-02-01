@@ -62,7 +62,8 @@ This repository is divided into three main parts:
 
 It is possible to follow our experiments and reproduce the models we've built
 by going through the notebooks one-by-one. For model training, we leveraged a
-Google Compute Engine (GCE) instance with 
+Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
+(n1-standard-16). 
 
 ## Data Sources
 
@@ -97,6 +98,7 @@ Google Compute Engine (GCE) instance with
     network.
 
 ## Models
+
 
 
 ## Key Results
