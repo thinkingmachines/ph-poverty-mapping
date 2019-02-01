@@ -66,6 +66,29 @@ Google Compute Engine (GCE) instance with
 
 ## Data Sources
 
+- **Demographic and Health Survey (DHS)**: we used the 2017 Philippine
+    Demographic and Health Survey as our measure of ground-truth for
+    socioeconomic indicators. It is conducted every 3 to 5 years, and contains
+    nationally representative information on different indicators across the
+    country. 
+- **Nighttime Luminosity Data**: we obtained nighttime lights data from the
+    Visible Infrared Imaging Radiometer Suite Day/Night Band (VIIRS DNB) for
+    the year 2016. It includes a continuous luminosity level from 0 to 122,
+    where 0 is the darkest pixel.
+- **Daytime Satellite Imagery**: we captured 134,540 satellite images from the
+    Google Static Maps API. Our configuration settings are as follows: zoom
+    level=17, scale=1, and image size=400x400pixels. These images match the
+    land area covered by a single pixel of night time lights data (0.25-sq.km). 
+- **High Resolution Settlement Data**: we used this dataset, provided by
+    Facebook Research, CIESIN Columbia, and World Bank, to filter out images
+    without human settlements. Their population estimates were based on recent
+    census data and high resolutoin satellite imagery (0.5-m) from
+    DigitalGlobe.
+- **OpenStreetMaps Data (OSM)**: we acquired crowd-sourced geospatial data from
+    OpenStreetMaps (OSM) via the Geofabrik online repository. This dataset is
+    volunteer-curated, and covers almost 83% of the entire Philippine street
+    network.
+
 
 ## Models
 
