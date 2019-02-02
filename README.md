@@ -150,6 +150,15 @@ measures across all levels**
 
 </p>
 
+<p align="center">
+**Predictions on different socioeconomic indicators using the OSM + Lights
+model**
+</p>
+
+![osm_education](./assets/osm_education.png)
+![osm_electricity](./assets/osm_electricity.png)
+![osm_water](./assets/osm_water.png)
+![osm_wealth_index](./assets/osm_wealth_index.png)
 
 ## Acknowledgments
 
