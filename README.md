@@ -135,7 +135,8 @@ directory.
 To view the full results, please see our technical notes
 [here](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
 We found out that for the four models (excluding the survey model), OSM-based
-features serve as a good previctor for socioeconomic well-being:
+features, especially OSM + Nighttime Lights,  serve as a good previctor for
+socioeconomic well-being:
 
 <p align="center">
 <b>Cross-validated r-squared results for predicting cluster-level poverty
