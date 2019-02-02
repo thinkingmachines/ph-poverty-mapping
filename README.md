@@ -63,7 +63,7 @@ This repository is divided into three main parts:
 It is possible to follow our experiments and reproduce the models we've built
 by going through the notebooks one-by-one. For model training, we leveraged a
 Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
-(n1-standard-16). 
+(n1-standard-16) and an NVIDIA Tesla P100 GPU. 
 
 ## Data Sources
 
@@ -89,7 +89,7 @@ Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
     [Facebook Research, CIESIN Columbia, and World
     Bank](https://www.ciesin.columbia.edu/data/hrsl/), to filter out images
     without human settlements. Their population estimates were based on recent
-    census data and high resolutoin satellite imagery (0.5-m) from
+    census data and high resolution satellite imagery (0.5-m) from
     DigitalGlobe.
 - **OpenStreetMaps Data (OSM)**: we acquired crowd-sourced geospatial data from
     [OpenStreetMaps (OSM)](https://www.openstreetmap.org) via the
