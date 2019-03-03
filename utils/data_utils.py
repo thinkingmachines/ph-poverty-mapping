@@ -19,6 +19,8 @@ from scipy.stats import pearsonr
 from scipy.stats import percentileofscore
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 
 TM_pal_categorical_3 = ("#ef4631", "#10b9ce", "#ff9138")
 sns.set(
@@ -31,6 +33,105 @@ SEED = 42
 np.random.seed(SEED)
 
 #### Scoring Helper Functions ####
+def pearsonr2(estimator, X, y_true):
+    """Calculates r-squared score using pearsonr
+    
+    Parameters
+    ----------
+    estimator 
+        The model or regressor to be evaluated
+    X : pandas dataframe or a 2-D matrix
+        The feature matrix
+    y : list of pandas series
+        The target vector
+        
+    Returns
+    ----------
+    float
+        R2 using pearsonr
+    """
+    y_pred = estimator.predict(X)
+    return pearsonr(y_true, y_pred)[0]**2
+
+def mae(estimator, X, y_true): 
+    """Calculates mean absolute error
+    
+    Parameters
+    ----------
+    estimator 
+        The model or regressor to be evaluated
+    X : pandas dataframe or a 2-D matrix
+        The feature matrix
+    y : list of pandas series
+        The target vector
+        
+    Returns
+    ----------
+    float
+        Mean absolute error
+    """
+    y_pred = estimator.predict(X)
+    return mean_absolute_error(y_true, y_pred)
+    
+def rmse(estimator, X, y_true): 
+    """Calculates root mean squared error
+    
+    Parameters
+    ----------
+    estimator 
+        The model or regressor to be evaluated
+    X : pandas dataframe or a 2-D matrix
+        The feature matrix
+    y : list of pandas series
+        The target vector
+        
+    Returns
+    ----------
+    float
+        Root mean squared error
+    """
+    y_pred = estimator.predict(X)
+    return np.sqrt(mean_squared_error(y_true, y_pred))
+
+def r2(estimator, X, y_true): 
+    """Calculates r-squared score using python's r2_score function
+    
+    Parameters
+    ----------
+    estimator 
+        The model or regressor to be evaluated
+    X : pandas dataframe or a 2-D matrix
+        The feature matrix
+    y : list of pandas series
+        The target vector
+        
+    Returns
+    ----------
+    float
+        R-squared score using python's r2_score function
+    """
+    y_pred = estimator.predict(X)
+    return r2_score(y_true, y_pred)  
+
+def mape(estimator, X, y_true): 
+    """Calculates mean average percentage error
+    
+    Parameters
+    ----------
+    estimator 
+        The model or regressor to be evaluated
+    X : pandas dataframe or a 2-D matrix
+        The feature matrix
+    y : list of pandas series
+        The target vector
+        
+    Returns
+    ----------
+    float
+        Mean average percentage error
+    """
+    y_pred = estimator.predict(X)
+    return np.mean(np.abs(y_true - y_pred) / np.abs(y_true)) * 100
 
 def adj_r2(estimator, X, y_true):
     """Calculates adjusted r-squared score
@@ -226,7 +327,37 @@ def plot_corr(
 
 #### Nighttime Lights Pre-processing Helper Functions ####
 
-def unstack_clusters(data):
+def ntl_agg_fnc(data):
+    agg = {}
+    agg['mean'] = data['ntl2016'].mean()
+    agg['max'] = data['ntl2016'].max()
+    agg['min'] = data['ntl2016'].min()
+    agg['median'] = data['ntl2016'].median()
+    agg['cov'] = data['ntl2016'].cov(data['ntl2016'])
+    agg['std'] = data['ntl2016'].std()
+    agg['skewness'] =  data['ntl2016'].skew()
+    agg['kurtosis'] =  data['ntl2016'].kurtosis()
+    return pd.Series(agg, index=[
+        'mean', 
+        'max', 
+        'min', 
+        'median', 
+        'cov', 
+        'std', 
+        'skewness', 
+        'kurtosis'
+    ])
+
+def unstack_clusters(
+    data,
+    id_col='ID',
+    dhs_col='DHSCLUST',
+    lat_col='ntllat',
+    lon_col='ntllon',
+    ntl_col='ntl2016',
+    file_col='filename',
+    ph_prefix=True
+):
     """ Unstacks nightlights data where certain pixels can belong to two or more clusters. 
     Makes it so that each row is a unique (cluster, id) pair.
     
@@ -241,23 +372,28 @@ def unstack_clusters(data):
         A dataframe of unstacked rows
     """
     
-    temp = {x: [] for x in data.columns}
+    first_row = data.iloc[0, :]
+    temp = {x: [] for x in [id_col, dhs_col, lat_col, lon_col, ntl_col, file_col] if x in first_row}
     for index, row in tqdm(
         data.iterrows(), total=len(data)
     ):
         clusters = [
-            x.strip() for x in row["DHSCLUST"].split(",")
+            x.strip() for x in row[dhs_col].split(",")
         ]
         for cluster in clusters:
-            cluster_int = int(
-                cluster.replace("PH2017", "").lstrip("0")
-            )
-            temp["ID"].append(row["ID"])
-            temp["DHSCLUST"].append(cluster_int)
-            temp["ntllon"].append(row["ntllon"])
-            temp["ntllat"].append(row["ntllat"])
-            temp["ntl2016"].append(row["ntl2016"])
-            temp["pop_sum"].append(row["pop_sum"])
+            if ph_prefix:
+                cluster = cluster.replace("PH2017", "").lstrip("0")
+            temp[dhs_col].append(int(cluster))
+            if id_col in row:
+                temp[id_col].append(row[id_col])
+            if lon_col in row:
+                temp[lon_col].append(row[lon_col])
+            if lat_col in row:
+                temp[lat_col].append(row[lat_col])
+            if ntl_col in row:
+                temp[ntl_col].append(row[ntl_col])
+            if file_col in row:
+                temp[file_col].append(row[file_col])
     data = pd.DataFrame(temp)
     
     return data
@@ -399,7 +535,6 @@ def balance_dataset(data, size=60000):
     classes = []
     for label in bin_labels:
         class_ = data[data.label == label].reset_index()
-        
         if len(class_) >= size:
             sample = class_.sample(
                 n=size, replace=False, random_state=SEED
@@ -409,23 +544,6 @@ def balance_dataset(data, size=60000):
                 n=size, replace=True, random_state=SEED
             )
         classes.append(sample)
-    
-    #for label in bin_labels:
-    #    class_low = data[data.label == "low"].reset_index()
-    #    class_medium = data[
-    #        data.label == "medium"
-    #    ].reset_index()
-    #    class_high = data[data.label == "high"].reset_index()
-
-    #    upsampled_low = class_low.sample(
-    #        n=size, replace=False, random_state=SEED
-    #    )
-    #    upsampled_medium = class_medium.sample(
-    #        n=size, replace=True, random_state=SEED
-    #    )
-    #    upsampled_high = class_high.sample(
-    #        n=size, replace=True, random_state=SEED
-    #    )
 
     data_balanced = pd.concat(classes)
     data_balanced = data_balanced.sample(

@@ -84,7 +84,8 @@ def evaluate_model(
     polynomial=False,
     poly_degree=2,
     n_workers=-1,
-    verbose=0
+    verbose=0,
+    plot=True
 ):
     """ Automatically trains and evaluates the specified model on given dataset 
     using an n-fold nested cross validation scheme. Supported models so far are:
@@ -148,7 +149,7 @@ def evaluate_model(
         model = get_model(model_type)
             
         # Nested cross validation
-        cv, nested_scores = nested_cross_validation(
+        cv, nested_scores, y_true, y_pred = nested_cross_validation(
             model,
             X,
             y,
@@ -164,7 +165,7 @@ def evaluate_model(
             polynomial=polynomial,
             poly_degree=poly_degree,
             n_workers=n_workers,
-            verbose=verbose
+            verbose=verbose,
         )
 
         # Display scores
@@ -177,23 +178,21 @@ def evaluate_model(
                 ": %.4f" % nested_scores[score].mean(),
             )
             print(nested_scores[score])
-            
+        
+        # Plot results
+        if plot:
+            plot_cross_val_results(
+                y_true,
+                y_pred,
+                indicator,
+                nested_scores,
+                refit=refit
+            )
+        
         # Get best estimator
         cv.fit(X, y)
         print(
             "Best estimator: {}".format(cv.best_estimator_)
-        )
-
-        # Get cross validation results
-        y_true, y_pred = get_cross_val_results(
-            cv.best_estimator_,
-            X,
-            y,
-            indicator,
-            nested_scores,
-            refit,
-            n_splits,
-            plot=True,
         )
 
         # Save results
@@ -201,7 +200,7 @@ def evaluate_model(
         results[indicator + "_true"] = y_true
         results[clust_str] = clusters
 
-        # Plot feature importances
+        # Plot feature importances (for tree-based models only)
         if plot_importance:
             if model_type == "random_forest":
                 rf_feature_importance(
@@ -229,6 +228,7 @@ def get_param_grid(model_type='ridge'):
     dict
         A dictionary of parameters 
     """
+    np.random.seed(SEED)
     if (model_type == "ridge") or (model_type == "lasso"):
         param_grid = {
             "regressor__alpha": stats.uniform.rvs(loc=0, scale=4, size=3),
@@ -282,7 +282,7 @@ def get_model(model_type='ridge'):
     model instance
         Model to be evaluated
     """
-    
+    np.random.seed(SEED)
     if model_type == "ridge":
         model = Ridge(random_state=SEED)
     elif model_type == "lasso":
@@ -360,7 +360,8 @@ def nested_cross_validation(
     dict
         A dictionary containing the scores specified in the scoring dictionary
     """
-
+    np.random.seed(SEED)
+    
     # Define inner and outer cross validation folds
     if task_type == "classification":
         inner_cv = StratifiedKFold(
@@ -423,6 +424,7 @@ def nested_cross_validation(
             n_jobs=n_workers,
             refit=refit,
         )
+        
     # Commence cross validation
     nested_scores = cross_validate(
         cv,
@@ -434,64 +436,61 @@ def nested_cross_validation(
         verbose=verbose,
         return_train_score=True,
     )
+    
+    # Get cross validated predictions
+    y_pred = cross_val_predict(
+        cv, 
+        X=X, 
+        y=y, 
+        cv=outer_cv,
+        n_jobs=n_workers,
+        verbose=verbose
+    )        
+    
+    return cv, nested_scores, y, y_pred
 
-    return cv, nested_scores
-
-def get_cross_val_results(
-    cv_model,
-    X,
-    y,
+def plot_cross_val_results(
+    y_true,
+    y_pred,
     indicator,
     nested_scores,
-    refit='r2',
-    n_splits=5,
-    plot=True,
+    refit='r2'
 ):
-    """Returns cross validated predictions for visualization purposes. 
+    """Plots cross validated estimates.
     
     Parameters
     ----------
-    cv_model:
-        The best estimator found using cross validation
-    X : pandas DataFrame, numpy array, or 2D list
-        Contains the feature matrix for training
-    y : pandas Series or list
-        Contains the target vector to predict
+    y_true : pandas Series or list
+        Contains the ground-truth target vector 
+    y_pred : pandas Series or list
+        Contains the predictions
     indicator : str
         A string value specifying the indicator
     nested_scores : dict
         A dictionary of output scores produced through cross validation
     refit : str (default is 'r2')
         Scoring metric to be optimized
-    n_splits : int (default is 5)
-        Number of splits/folds for the n-fold cross validation
-    plot : boolean (default is True)
-        Whether or not to plot the cross validated predictions. 
-        Note: Predictions are generated using sklearn's cross_val_predict() function
     """
     
     # Get cross validation results
-    y_pred = cross_val_predict(cv_model, X, y, cv=n_splits)
+    #y_pred = cross_val_predict(cv_model, X, y, cv=n_splits)
 
     # Plot Actual vs Predicted
-    if plot:
-        ax = sns.regplot(
-            y,
-            y_pred,
-            line_kws={"color": "black", "lw": 1},
-            scatter_kws={"alpha": 0.3},
+    ax = sns.regplot(
+        y_true,
+        y_pred,
+        line_kws={"color": "black", "lw": 1},
+        scatter_kws={"alpha": 0.3},
+    )
+    plt.title(
+        indicator
+        + r" $r^2: {0:.3f}$".format(
+            nested_scores["test_" + str(refit)].mean()
         )
-        plt.title(
-            indicator
-            + r" $r^2: {0:.3f}$".format(
-                nested_scores["test_" + str(refit)].mean()
-            )
-        )
-        plt.xlabel("Observed " + indicator.lower())
-        plt.ylabel("Predicted " + indicator.lower())
-        plt.show()
-        
-    return y, y_pred
+    )
+    plt.xlabel("Observed " + indicator.lower())
+    plt.ylabel("Predicted " + indicator.lower())
+    plt.show()
 
 def rf_feature_importance(
     cv, X, y, n_features=30, size=(10, 15)
