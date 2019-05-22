@@ -142,12 +142,14 @@ socioeconomic well-being:
 <b>Cross-validated r-squared results for predicting cluster-level poverty
 measures across all levels</b>
 
-|                       | Survey | Lights | Transfer | OSM   | OSM + Lights |
+|                       | Survey | Lights | Transfer*| OSM   | OSM+Lights |
 |-----------------------|--------|--------|----------|-------|--------------|
-| Wealth Index          | 0.789  | 0.563  | 0.593    | 0.591 | 0.619        |
-| Education             | 0.605  | 0.427  | 0.440    | 0.459 | 0.481        |
-| Access to Electricity | 0.368  | 0.267  | 0.219    | 0.287 | 0.317        |
-| Access to Water       | 0.030  | 0.018  | 0.047    | 0.038 | 0.039        |
+| Wealth Index          | 0.773  | 0.568  | 0.625    | 0.588 | 0.620        |
+| Education             | 0.605  | 0.435  | 0.469    | 0.464 | 0.485        |
+| Access to Electricity | 0.368  | 0.292  | 0.274    | 0.320 | 0.345        |
+| Access to Water       | 0.030  | 0.058  | 0.097    | 0.049 | 0.056        |
+    
+*includes regional indicators. 
 
 </p>
 
@@ -156,10 +158,10 @@ measures across all levels</b>
 model</b>
 </p>
 
-![osm_education](./assets/osm_education.png)
-![osm_electricity](./assets/osm_electricity.png)
-![osm_water](./assets/osm_water.png)
-![osm_wealth_index](./assets/osm_wealth_index.png)
+![transfer_education](./assets/transfer_education.png)
+![transfer_electricity](./assets/transfer_electricity.png)
+![transfer_water](./assets/transfer_water.png)
+![transfer_wealth_index](./assets/transfer_wealth_index.png)
 
 ## Acknowledgments
 
