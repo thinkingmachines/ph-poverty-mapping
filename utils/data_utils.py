@@ -355,6 +355,7 @@ def unstack_clusters(
     lat_col='ntllat',
     lon_col='ntllon',
     ntl_col='ntl2016',
+    pop_col='pop_sum',
     file_col='filename',
     ph_prefix=True
 ):
@@ -373,7 +374,7 @@ def unstack_clusters(
     """
     
     first_row = data.iloc[0, :]
-    temp = {x: [] for x in [id_col, dhs_col, lat_col, lon_col, ntl_col, file_col] if x in first_row}
+    temp = {x: [] for x in [id_col, dhs_col, lat_col, lon_col, ntl_col, file_col, pop_col] if x in first_row}
     for index, row in tqdm(
         data.iterrows(), total=len(data)
     ):
@@ -392,6 +393,8 @@ def unstack_clusters(
                 temp[lat_col].append(row[lat_col])
             if ntl_col in row:
                 temp[ntl_col].append(row[ntl_col])
+            if pop_col in row:
+                temp[pop_col].append(row[pop_col])
             if file_col in row:
                 temp[file_col].append(row[file_col])
     data = pd.DataFrame(temp)
