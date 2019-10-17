@@ -10,7 +10,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
-from google.cloud import storage
+#from google.cloud import storage
 
 import seaborn as sns
 from sklearn import preprocessing

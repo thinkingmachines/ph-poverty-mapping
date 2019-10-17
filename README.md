@@ -18,8 +18,7 @@ This repository accompanies our research work, *"Mapping Philippine Poverty
 using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial
 Information"*, currently published in our
 [website](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
-In this work, **we developed five wealth prediction models** using
-state-of-the-art methods and various geospatial data sources.
+In this work, we developed wealth prediction models using a combination of machine learning and geospatial data.
 
 ![pampanga map](./assets/pampanga-map.jpg)
 
@@ -75,8 +74,7 @@ Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
 - **Nighttime Luminosity Data**: we obtained nighttime lights data from the
     [Visible Infrared Imaging Radiometer Suite Day/Night Band (VIIRS
     DNB)](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html) for the
-    year 2016. It includes a continuous luminosity level from 0 to 122, where 0
-    is the darkest pixel.
+    year 2016. 
 - **Daytime Satellite Imagery**: we captured 134,540 satellite images from the
     [Google Static Maps
     API](https://developers.google.com/maps/documentation/maps-static/intro).
@@ -88,66 +86,55 @@ Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
 - **High Resolution Settlement Data (HRSL)**: we used this dataset, provided by
     [Facebook Research, CIESIN Columbia, and World
     Bank](https://www.ciesin.columbia.edu/data/hrsl/), to filter out images
-    without human settlements. Their population estimates were based on recent
+    containing no human settlements. Their population estimates were based on recent
     census data and high resolution satellite imagery (0.5-m) from
     DigitalGlobe.
 - **OpenStreetMaps Data (OSM)**: we acquired crowd-sourced geospatial data from
     [OpenStreetMaps (OSM)](https://www.openstreetmap.org) via the
-    [Geofabrik](https://www.geofabrik.de/) online repository. This dataset is
-    volunteer-curated, and covers almost 83% of the entire Philippine street
-    network.
+    [Geofabrik](https://www.geofabrik.de/) online repository. 
 
 ## Models
 
-We developed five wealth prediction models from different data sources. You can
+We developed wealth prediction models using different data sources. You can
 follow-through our analysis by looking at the notebooks in the `notebooks/`
 directory.
 
-- **Survey Model** (`notebooks/01_survey_model.ipynb`): we extracted features
-    such as urban/rural classification, proportion of households with a
-    car/truck, avg. number of rooms used for sleeping, and etc. This model
-    serves as our baseline or "gold standard" against which other
-    remote-sensing based techniques will be compared.
-- **Nighttime Lights Transfer Learning Model** (`notebooks/04_transfer_model.ipynb`): we used
+- **Nighttime Lights Transfer Learning Model** (`notebooks/03_transfer_model.ipynb`): we used
     a transfer learning approach proposed by Xie et al and Jean et al. The main
     assumption here is that nighttime lights act as a good proxy for economic
-    activity. We first started with a Convolutional Neural Network (CNN)
-    pre-trained on ImageNet, and used the feature vectors into a ridge
+    activity. We started with a Convolutional Neural Network (CNN)
+    pre-trained on ImageNet, and used the feature embeddings as input into a ridge
     regression model.
-- **Nighttime Lights Statistics Model** (`notebooks/02_lights_eda.ipynb`,
+- **Nighttime Lights Statistics Model** (`notebooks/01_lights_eda.ipynb`,
     `notebooks/03_lights_model.ipynb`): in this model, we generated nighttime
     light features consisting of summary statistics and histogram-based
     features. We then compared the performance of three different machine
     learning algorithms: ridge regression, random forest regressor, and
     gradient boosting method (XGBoost).
-- **OpenStreetMaps (OSM) Model** (`notebooks/05_osm_model.ipynb`): we extracted three
+- **OpenStreetMaps (OSM) Model** (`notebooks/04_osm_model.ipynb`): we extracted three
     types of OSM features, roads, buildings, and points-of-interests (POIs)
     within a 5-km radius for rural areas and 2-km radius for urban areas. We
-    then trained a random forest regressor for these features.
+    then trained a random forest regressor on these features.
 - **OpenStreetMaps (OSM) + Nighttime Lights (NTL)**
-    (`notebooks/02_lights_eda.ipynb`, `notebooks/05_osm_model.ipynb`): we also
+    (`notebooks/02_lights_eda.ipynb`, `notebooks/04_osm_model.ipynb`): we also
     trained a random forest model combining OSM data and nighttime
-    lights-derived features as input. This is motivated by the assumption that
-    using features from mixed data sources will improve model performance.
+    lights-derived features as input.
 
 ## Key Results
 
 To view the full results, please see our technical notes
 [here](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
-We found out that for the four models (excluding the survey model), OSM-based
-features, especially OSM + Nighttime Lights,  serve as a good previctor for
-socioeconomic well-being:
 
 <p align="center">
 <b>Cross-validated r-squared results for predicting cluster-level poverty
 measures across all levels</b>
 
 |                       | Survey | Lights | Transfer*| OSM   | OSM+Lights |
-|-----------------------|--------|--------|----------|-------|--------------|
-| Wealth Index          | 0.773  | 0.568  | 0.625    | 0.588 | 0.620        |
-| Education             | 0.605  | 0.435  | 0.469    | 0.464 | 0.485        |
-| Access to Electricity | 0.368  | 0.292  | 0.274    | 0.320 | 0.345        |
-| Access to Water       | 0.030  | 0.058  | 0.097    | 0.049 | 0.056        |
+|-----------------------|--------|--------|----------|-------|------------|
+| Wealth Index          | 0.773  | 0.568  | 0.625    | 0.588 | 0.620      |
+| Education             | 0.605  | 0.435  | 0.469    | 0.464 | 0.485      |
+| Access to Electricity | 0.368  | 0.292  | 0.274    | 0.320 | 0.345      |
+| Access to Water       | 0.030  | 0.058  | 0.097    | 0.049 | 0.056      |
     
 *includes regional indicators. 
 
@@ -169,6 +156,3 @@ This work was supported by the [UNICEF Innovation
 Fund](https://unicefinnovationfund.org/). We would also like to thank Vedran
 Sekara, Do-Hyung Kim of UNICEF and Priscilla Moraes of Google for the
 insightful discussions and valuable mentorship.
-
-
-
