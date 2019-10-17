@@ -1,3 +1,4 @@
+import wandb
 import os
 import sys
 import argparse
@@ -10,17 +11,21 @@ import torchsummary
 import transfer_utils
 from transfer_model import NTLModel
 
+SEED = 42
 IMG_DIM = (3, 400, 400)
 USE_GPU = "cuda:0" if torch.cuda.is_available() else "cpu"
 DEVICE = torch.device(USE_GPU)
  
-def main(args):        
+def main(args):  
+    torch.manual_seed(42)
+    
     # Load data
     dataloaders, dataset_sizes, class_names = transfer_utils.load_transform_data(
         data_dir=args.data_dir, batch_size=args.batch_size
     )
     
     # Sanity check
+    logging.info(USE_GPU)
     logging.info(dataset_sizes)
     logging.info(class_names)
     
@@ -30,14 +35,14 @@ def main(args):
     if USE_GPU is not 'cpu':
         model = model.cuda()
     logging.info(torchsummary.summary(model, IMG_DIM))
+    wandb.watch(model)
     
     # Define loss function and optimizer
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     
     # Load checkpoint, if found
-    curr_epoch, curr_evals = 0, (None, None, None)
-    model, optimizer, curr_epoch, curr_evals = transfer_utils.load_checkpoint(
+    model, optimizer, curr_epoch = transfer_utils.load_checkpoint(
         args.model_best_dir, model, optimizer
     )
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
@@ -54,11 +59,11 @@ def main(args):
         scheduler, 
         num_epochs=args.epochs, 
         curr_epoch=curr_epoch,
-        curr_evals=curr_evals,
         checkpoint_dir=args.checkpoint_dir
     )
 
 if __name__ == "__main__":
+    wandb.init(project="tm-poverty-prediction")
     logging.basicConfig(level=logging.DEBUG)
     
     parser = argparse.ArgumentParser(description='Philippine Poverty Prediction')
@@ -95,5 +100,6 @@ if __name__ == "__main__":
         help='data directory (default: "../models/")'
     )
     args = parser.parse_args()
+    wandb.config.update(args)
     
     main(args)
