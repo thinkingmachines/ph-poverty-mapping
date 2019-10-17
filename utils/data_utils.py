@@ -25,7 +25,7 @@ from sklearn.metrics import mean_absolute_error
 TM_pal_categorical_3 = ("#ef4631", "#10b9ce", "#ff9138")
 sns.set(
     style="white",
-    font_scale=1.25,
+    font_scale=1,
     palette=TM_pal_categorical_3,
 )
 
@@ -236,6 +236,7 @@ def plot_regplot(
         line_kws={"color": "black", "lw": 2},
         scatter_kws={"alpha": 0.3},
     )
+    plt.ticklabel_format(style='sci', axis='x', scilimits=(1,5))
     plt.title(
         "Relationship between {} \nand {}".format(
             x_label, y_label

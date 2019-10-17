@@ -12,7 +12,10 @@ __pycache__/
 # Other not important stuff
 .vscode
 .idea/
+
+# Private folders
 data/
+models/
 
 # Distribution / packaging
 .Python

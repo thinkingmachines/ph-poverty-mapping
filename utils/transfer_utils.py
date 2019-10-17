@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 from decimal import Decimal
 from sklearn import metrics
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -26,13 +27,14 @@ from torchvision import datasets, models, transforms
 from torchsummary import summary
 from torch.autograd import Variable
 
-from tqdm import tqdm
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 SEED = 42
 np.random.seed(SEED)
 
-use_gpu = "cuda:0" if torch.cuda.is_available() else "cpu"
-device = torch.device(use_gpu)
+USE_GPU = "cuda:0" if torch.cuda.is_available() else "cpu"
+DEVICE = torch.device(USE_GPU)
 
 IMGNET_MEAN = [0.485, 0.456, 0.406]
 IMGNET_STD = [0.229, 0.224, 0.225]
@@ -196,9 +198,9 @@ def load_checkpoint(
         accuracies = checkpoint['accuracies']
         f_ones = checkpoint['f_ones']
         evals = (losses, accuracies, f_ones)
-        print("Loaded checkpoint '{}' (epoch {}) successfully.".format(model_best_path, epoch))
+        logging.info("Loaded checkpoint '{}' (epoch {}) successfully.".format(model_best_path, epoch))
     else:
-        print("No checkpoint found.")
+        logging.info("No checkpoint found.")
     return model, optimizer, epoch, evals
 
 def train_model(
@@ -211,7 +213,6 @@ def train_model(
     num_epochs=100,
     curr_epoch=0,
     curr_evals=(None, None, None),
-    fig_dir="figures/",
     checkpoint_dir="models/",
 ):
     """ Trains Night Lights Model
@@ -256,8 +257,7 @@ def train_model(
         f_ones = {phase: [] for phase in phases}
 
     for epoch in range(curr_epoch, num_epochs):
-        print("Epoch {}/{}".format(epoch, num_epochs - 1))
-        print("-" * 10)
+        logging.info("Epoch {}/{}".format(epoch, num_epochs - 1))
 
         # Each epoch has a training and validation phase
         update = {}
@@ -280,8 +280,8 @@ def train_model(
                 desc="Iteration",
                 ncols=2,
             ):
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                inputs = inputs.to(DEVICE)
+                labels = labels.to(DEVICE)
 
                 # Zero the parameter gradients
                 optimizer.zero_grad()
@@ -328,7 +328,7 @@ def train_model(
 
             # Print progress
             learning_rate = optimizer.param_groups[0]["lr"]
-            print(
+            logging.info(
                 "{} Loss: {:.4f} Accuracy: {:.4f} F1-Score: {:.4f} LR: {:.4E}".format(
                     phase.upper(),
                     epoch_loss,
@@ -379,11 +379,11 @@ def train_model(
                 )
             
             # Save loss/acc/f1 curve figures
-            save_plot(fig_dir, losses, metric="loss")
-            save_plot(
-                fig_dir, accuracies, metric="accuracy"
-            )
-            save_plot(fig_dir, f_ones, metric="f1_score")
+            #save_plot(fig_dir, losses, metric="loss")
+            #save_plot(
+            #    fig_dir, accuracies, metric="accuracy"
+            #)
+            #save_plot(fig_dir, f_ones, metric="f1_score")
 
         if learning_rate <= 1e-10:
             break
@@ -391,12 +391,12 @@ def train_model(
         loss = loss.item()
 
     time_elapsed = time.time() - since
-    print(
+    logging.info(
         "Training complete in {:.0f}m {:.0f}s".format(
             time_elapsed // 60, time_elapsed % 60
         )
     )
-    print("Best Val Accuracy: {:4f}".format(best_acc))
+    logging.info("Best Val Accuracy: {:4f}".format(best_acc))
 
     # load best model weights
     model.load_state_dict(best_model_wts)
@@ -429,8 +429,8 @@ def visualize_model(
         for i, (inputs, labels) in enumerate(
             dataloaders["val"]
         ):
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to(DEVICE)
+            labels = labels.to(DEVICE)
 
             outputs = model(inputs)
             _, preds = torch.max(outputs, 1)
@@ -491,7 +491,7 @@ def get_embedding(img_path, model_, size=4096, gpu=False):
 
     layer = list(model.classifier.children())[-3]
     h = layer.register_forward_hook(copy_data)
-    image = image.to(device)
+    image = image.to(DEVICE)
     h_x = model(image)
     h.remove()
 
