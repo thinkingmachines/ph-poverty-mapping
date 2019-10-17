@@ -16,6 +16,7 @@ __pycache__/
 # Private folders
 data/
 models/
+wandb/
 
 # Distribution / packaging
 .Python

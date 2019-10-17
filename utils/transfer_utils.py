@@ -8,6 +8,7 @@ import os
 import copy
 import gc
 import shutil
+import wandb
 
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -171,6 +172,7 @@ def save_checkpoint(
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
     torch.save(state, checkpoint_dir + filename)
+    torch.save(state, wandb.run.dir)
     if is_best:
         shutil.copyfile(
             checkpoint_dir + filename,
@@ -183,7 +185,6 @@ def load_checkpoint(
     optimizer=None, 
     scheduler=None,
     epoch = 0,
-    evals = (None, None, None)
 ):
     # Load best model    
     if os.path.isfile(model_best_path):
@@ -197,11 +198,10 @@ def load_checkpoint(
         losses = checkpoint['losses']
         accuracies = checkpoint['accuracies']
         f_ones = checkpoint['f_ones']
-        evals = (losses, accuracies, f_ones)
         logging.info("Loaded checkpoint '{}' (epoch {}) successfully.".format(model_best_path, epoch))
     else:
         logging.info("No checkpoint found.")
-    return model, optimizer, epoch, evals
+    return model, optimizer, epoch
 
 def train_model(
     model,
@@ -212,7 +212,6 @@ def train_model(
     scheduler,
     num_epochs=100,
     curr_epoch=0,
-    curr_evals=(None, None, None),
     checkpoint_dir="models/",
 ):
     """ Trains Night Lights Model
@@ -248,14 +247,7 @@ def train_model(
     best_f1 = 0
 
     phases = ["train", "val"]
-    losses, accuracies, f_ones = curr_evals
-    if not losses:
-        losses = {phase: [] for phase in phases}
-    if not accuracies:
-        accuracies = {phase: [] for phase in phases}
-    if not f_ones:
-        f_ones = {phase: [] for phase in phases}
-
+    iteration = {x: 0 for x in phases}
     for epoch in range(curr_epoch, num_epochs):
         logging.info("Epoch {}/{}".format(epoch, num_epochs - 1))
 
@@ -277,8 +269,7 @@ def train_model(
             for idx, (inputs, labels) in tqdm(
                 enumerate(dataloaders[phase]),
                 total=len(dataloaders[phase]),
-                desc="Iteration",
-                ncols=2,
+                desc="Iteration"
             ):
                 inputs = inputs.to(DEVICE)
                 labels = labels.to(DEVICE)
@@ -311,6 +302,10 @@ def train_model(
                 labels_.extend(
                     labels.data.cpu().numpy().tolist()
                 )
+                wandb.log({
+                    "{} iteration loss".format(phase): loss.item()
+                }, step=iteration[phase])
+                iteration[phase] += 1
 
             # epoch loss, accuracy, and f1 score
             epoch_loss = running_loss / dataset_sizes[phase]
@@ -321,10 +316,16 @@ def train_model(
             epoch_f1 = metrics.f1_score(
                 preds_, labels_, average="macro"
             )
-
-            losses[phase].append(epoch_loss)
-            accuracies[phase].append(epoch_acc)
-            f_ones[phase].append(epoch_f1)
+            
+            wandb.log({
+                "{} epoch loss".format(phase): epoch_loss
+            }, step=epoch)
+            wandb.log({
+                "{} epoch accuracy".format(phase): epoch_acc
+            }, step=epoch)
+            wandb.log({
+                "{} epoch F1".format(phase): epoch_f1
+            }, step=epoch)
 
             # Print progress
             learning_rate = optimizer.param_groups[0]["lr"]
@@ -377,13 +378,6 @@ def train_model(
                     filename,
                     checkpoint_dir
                 )
-            
-            # Save loss/acc/f1 curve figures
-            #save_plot(fig_dir, losses, metric="loss")
-            #save_plot(
-            #    fig_dir, accuracies, metric="accuracy"
-            #)
-            #save_plot(fig_dir, f_ones, metric="f1_score")
 
         if learning_rate <= 1e-10:
             break
