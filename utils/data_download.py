@@ -82,41 +82,6 @@ def get_static_google_maps(
     image.convert("RGB").save(filename)
     return gsm_url
 
-
-def get_satellite_images(csv_path, outdir, limit=None):
-    """Get satellite image and saves it into an output path
-
-    Parameters
-    ----------
-    csv_path: str
-        directory where the lat lon csv files are stored
-    outdir: str
-        output directory to store images and report
-    limit : int
-        number of entries to download (default is None)
-    """
-    # Create report.txt file for logging
-    report_file = outdir + "report.txt"
-    df = pd.read_csv(csv_path)
-    latitude, longitude = df["lat"][:limit], df["lon"][:limit]
-    psgc = df["PSGC"][:limit]
-
-    for idx, (psgc_, lat, lon) in tqdm(
-        enumerate(zip(psgc, latitude, longitude)), total=len(latitude)
-    ):
-        filename = (
-            outdir + str(psgc_) + "_" + str(lat) + "_" + str(lon) + ".jpg"
-        )
-        try:
-            get_static_google_maps(filename, center=(lat, lon), show=False)
-            with open(report_file, "a") as f:
-                f.write(filename + "\n")
-                logger.info("Image saved!: {}".format(filename))
-        except urllib.error.HTTPError:
-            logger.warn("No image for {}".format(filename))
-            pass
-
-        gc.collect()
         
 def get_satellite_images_with_labels(csv_path, outdir, limit=None):
     """Get satellite image and saves it into an output path based 
