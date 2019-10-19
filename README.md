@@ -120,39 +120,19 @@ directory.
     trained a random forest model combining OSM data and nighttime
     lights-derived features as input.
 
-## Key Results
-
-To view the full results, please see our technical notes
-[here](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
-
-<p align="center">
-<b>Cross-validated r-squared results for predicting cluster-level poverty
-measures across all levels</b>
-
-|                       | Survey | Lights | Transfer*| OSM   | OSM+Lights |
-|-----------------------|--------|--------|----------|-------|------------|
-| Wealth Index          | 0.773  | 0.568  | 0.625    | 0.588 | 0.620      |
-| Education             | 0.605  | 0.435  | 0.469    | 0.464 | 0.485      |
-| Access to Electricity | 0.368  | 0.292  | 0.274    | 0.320 | 0.345      |
-| Access to Water       | 0.030  | 0.058  | 0.097    | 0.049 | 0.056      |
-    
-*includes regional indicators. 
-
-</p>
-
-<p align="center">
-<b>Predictions on different socioeconomic indicators using the OSM + Lights
-model</b>
-</p>
-
-![transfer_education](./assets/transfer_education.png)
-![transfer_electricity](./assets/transfer_electricity.png)
-![transfer_water](./assets/transfer_water.png)
-![transfer_wealth_index](./assets/transfer_wealth_index.png)
+## Citation
+Use this bibtex to cite this repository:
+```
+@misc{ph_poverty_prediction_2018,
+  title={Mapping Poverty in the Philippines Using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial Information},
+  author={Tingzon, Isabelle and Orden, Ardie and Sy, Stephanie and Sekara, Vedran and Weber, Ingmar and Fatehkia, Masoomali and Herranz, Manuel Garcia and Kim, Dohyung},
+  year={2018},
+  publisher={Github},
+  journal={GitHub repository},
+  howpublished={\url{https://github.com/thinkingmachines/ph-poverty-mapping}},
+}
+```
 
 ## Acknowledgments
+This work was supported by the [UNICEF Innovation Fund](https://unicefinnovationfund.org/).
 
-This work was supported by the [UNICEF Innovation
-Fund](https://unicefinnovationfund.org/). We would also like to thank Vedran
-Sekara, Do-Hyung Kim of UNICEF and Priscilla Moraes of Google for the
-insightful discussions and valuable mentorship.
