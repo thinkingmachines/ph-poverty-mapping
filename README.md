@@ -50,6 +50,20 @@ Notable dependencies include:
 - torchvision==0.2.1
 - tqdm==4.30.0
 
+## Quick Start
+
+To download satellite images and generate training training/validation sets, run:
+```s
+cd src
+python data_download.py
+```
+
+To train the model, run:
+```s
+cd src
+python train.py
+```
+
 ## Code Organization 
 
 This repository is divided into three main parts:
