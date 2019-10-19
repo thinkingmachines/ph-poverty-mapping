@@ -52,13 +52,13 @@ Notable dependencies include:
 
 ## Quick Start
 
-To download satellite images and generate training training/validation sets, run:
+To download satellite images and generate training/validation sets, run:
 ```s
 cd src
 python data_download.py
 ```
 
-To train the model, run:
+To train the nighttime lights transfer learning model, run:
 ```s
 cd src
 python train.py
