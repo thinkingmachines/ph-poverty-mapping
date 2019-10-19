@@ -40,6 +40,8 @@ DEVICE = torch.device(USE_GPU)
 IMGNET_MEAN = [0.485, 0.456, 0.406]
 IMGNET_STD = [0.229, 0.224, 0.225]
 
+NUM_IMGS = 5
+
 def load_transform_data(data_dir="../data", batch_size=32):
     """ Transforms the training and validation sets.
     Source: https://discuss.pytorch.org/t/questions-about-imagefolder/774/6 
@@ -172,7 +174,7 @@ def save_checkpoint(
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
     torch.save(state, checkpoint_dir + filename)
-    torch.save(state, wandb.run.dir)
+    torch.save(state, os.path.join(wandb.run.dir, filename))
     if is_best:
         shutil.copyfile(
             checkpoint_dir + filename,
@@ -207,6 +209,7 @@ def train_model(
     model,
     dataloaders,
     dataset_sizes,
+    class_names,
     criterion,
     optimizer,
     scheduler,
@@ -302,9 +305,9 @@ def train_model(
                 labels_.extend(
                     labels.data.cpu().numpy().tolist()
                 )
-                wandb.log({
-                    "{} iteration loss".format(phase): loss.item()
-                }, step=iteration[phase])
+                #wandb.log({
+                #    "{} iteration loss".format(phase): loss.item()
+                #}, step=iteration[phase])
                 iteration[phase] += 1
 
             # epoch loss, accuracy, and f1 score
@@ -326,6 +329,19 @@ def train_model(
             wandb.log({
                 "{} epoch F1".format(phase): epoch_f1
             }, step=epoch)
+            
+            if phase == 'val':
+                examples = []
+                images_so_far = 0
+                for j in range(inputs.size()[0]):
+                    pred = class_names[preds[j]]
+                    examples.append(wandb.Image(inputs.cpu().data[j], caption=pred))
+                    if images_so_far > NUM_IMGS:
+                        break
+                    images_so_far += 1
+                wandb.log({
+                    "{} examples".format(phase): examples
+                }, step=epoch)
 
             # Print progress
             learning_rate = optimizer.param_groups[0]["lr"]
@@ -357,10 +373,7 @@ def train_model(
                     "epoch": epoch + 1,
                     "lr": learning_rate,
                     "state_dict": model.state_dict(),
-                    "optimizer": optimizer.state_dict(),
-                    "losses": losses,
-                    "accuracies": accuracies,
-                    "f_ones": f_ones,
+                    "optimizer": optimizer.state_dict()
                 }
                     
                 # Make filename verbose

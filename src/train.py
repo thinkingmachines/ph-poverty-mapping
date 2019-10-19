@@ -54,6 +54,7 @@ def main(args):
         model, 
         dataloaders, 
         dataset_sizes, 
+        class_names,
         criterion, 
         optimizer, 
         scheduler, 
