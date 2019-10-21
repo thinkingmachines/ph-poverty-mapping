@@ -94,11 +94,11 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         '--model-best-dir', type=str, default="../models/model.pt", metavar='S',
-        help='data directory (default: "../models/model.pt")'
+        help='besy model path (default: "../models/model.pt")'
     )
     parser.add_argument(
         '--checkpoint-dir', type=str, default="../models/", metavar='S',
-        help='data directory (default: "../models/")'
+        help='model directory (default: "../models/")'
     )
     args = parser.parse_args()
     wandb.config.update(args)
