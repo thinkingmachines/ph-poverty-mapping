@@ -64,6 +64,25 @@ cd src
 python train.py
 ```
 
+Usage is as follows:
+```s
+usage: train.py [-h] [--batch-size N] [--lr LR] [--epochs N] [--factor N]
+                [--patience N] [--data-dir S] [--model-best-dir S]
+                [--checkpoint-dir S]
+Philippine Poverty Prediction
+optional arguments:
+  -h, --help          show this help message and exit
+  --batch-size N      input batch size for training (default: 32)
+  --lr LR             learning rate (default: 1e-6)
+  --epochs N          number of epochs to train (default: 100)
+  --factor N          factor to reduce learning rate by on pleateau (default:
+                      0.1)
+  --patience N        number of iterations before reducing lr (default: 10)
+  --data-dir S        data directory (default: "../data/images/")
+  --model-best-dir S  best model path (default: "../models/model.pt")
+  --checkpoint-dir S  model directory (default: "../models/")
+```
+
 ## Code Organization 
 
 This repository is divided into three main parts:
