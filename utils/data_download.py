@@ -20,9 +20,6 @@ from tqdm import tqdm
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-API_KEY = os.environ['GEO_AI_API_KEY']
-SECRET_KEY = os.environ['GEO_AI_SECRET_KEY']
-
 def get_static_google_maps(
     filename,
     center=(0, 0),
@@ -51,6 +48,9 @@ def get_static_google_maps(
         show resulting image, default is False
 
     """
+    API_KEY = os.environ['GEO_AI_API_KEY']
+    SECRET_KEY = os.environ['GEO_AI_SECRET_KEY']
+    
     base_url = "https://maps.googleapis.com/maps/api/staticmap?"
     # fmt: off
     gsm_url = (
@@ -83,7 +83,15 @@ def get_static_google_maps(
     return gsm_url
 
         
-def get_satellite_images_with_labels(csv_path, outdir, limit=None):
+def get_satellite_images_with_labels(
+    csv_path, 
+    outdir, 
+    report_dir, 
+    scale=1, 
+    zoom=17, 
+    imgsize=(400,400), 
+    limit=None
+):
     """Get satellite image and saves it into an output path based 
     on its night light intensity class (low, medium, high)
 
@@ -97,7 +105,10 @@ def get_satellite_images_with_labels(csv_path, outdir, limit=None):
         number of entries to download (default is None)
     """
     # Create report.txt file for logging
-    report_file = outdir + "report/report.csv"
+    if not os.path.exists(report_dir):
+        os.makedirs(report_dir)
+    report_file = report_dir + "report.csv"
+    
     df = pd.read_csv(csv_path) 
     ids = df['ID'][:limit]
     latitude, longitude = df["ntllat"][:limit], df["ntllon"][:limit]
@@ -112,7 +123,14 @@ def get_satellite_images_with_labels(csv_path, outdir, limit=None):
         )
         try:
             if not os.path.isfile(filename):
-                get_static_google_maps(filename, center=(lat, lon), show=False)
+                get_static_google_maps(
+                    filename, 
+                    center=(lat, lon), 
+                    scale=scale,
+                    zoom=zoom,
+                    imgsize=imgsize,
+                    show=False
+                )
                 
             report = {'id':[], 'lat':[], 'lon':[], 'cluster':[], 'filename':[], 'label':[]}
             report['id'].append(id_)
