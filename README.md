@@ -79,7 +79,7 @@ Once downloaded, copy and unzip the file in the `/data` directory. The notebook 
 We used the Google Static Maps API to download 400x400 px zoom 17 satellite images. To download satellite images and generate training/validation sets, run the following script in the src/ directory:
 
 python data_download.py
-Note that this script downloads 134,540 satellite images from Google Static Maps and may incur costs. See ]this page](https://developers.google.com/maps/documentation/maps-static/usage-and-billing#static-maps) for more information on Maps Static API Usage and Billing.
+Note that this script downloads 134,540 satellite images from Google Static Maps and may incur costs. See [this page](https://developers.google.com/maps/documentation/maps-static/usage-and-billing#static-maps) for more information on Maps Static API Usage and Billing.
 
 To download satellite images and generate training/validation sets, run the following script in `src/`:
 ```s
