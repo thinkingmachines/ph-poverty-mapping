@@ -14,18 +14,20 @@
 
 # Philippine Poverty Mapping
 
-This repository accompanies our research work, *"Mapping Philippine Poverty
-using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial
-Information"*, currently published in our
-[website](https://stories.thinkingmachin.es/philippines-most-vulnerable-communities/).
-In this work, we developed wealth prediction models using a combination of machine learning and geospatial data.
+This repository accompanies our [research work](https://aiforsocialgood.github.io/icml2019/accepted/track1/pdfs/7_aisg_icml2019.pdf), 
+*"Mapping Philippine Poverty using Machine Learning, Satellite Imagery, and Crowd-sourced Geospatial
+Information"*.
+
+The goal of this project is to provide a means for faster, cheaper, and 
+more granular estimation of poverty measures in the Philippines using 
+machine learning, satellite imagery, and open geospatial data.
 
 ![pampanga map](./assets/pampanga-map.jpg)
 
 
 ## Setup
-
-In order to run the notebooks, all dependencies must be installed. We provided
+To get started, run the jupyter notebooks in `notebooks/` in order. 
+Note that to run the notebooks, all dependencies must be installed. We provided
 a `Makefile` to accomplish this task:
 
 ```s
@@ -50,17 +52,43 @@ Notable dependencies include:
 - torchvision==0.2.1
 - tqdm==4.30.0
 
-## Quick Start
+## Code Organization 
 
-To download satellite images and generate training/validation sets, run:
+This repository is divided into three main parts:
+- **notebooks/**: contains all Jupyter notebooks for different wealth
+    prediction models.
+- **utils/**: contains utility methods for loading datasets, building model, and
+   performing training routines. 
+- **src/**: contains the transfer learning training script.
+
+It is possible to follow our experiments and reproduce the models we've built
+by going through the notebooks one-by-one. For model training, we leveraged a
+Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
+(n1-standard-16) and an NVIDIA Tesla P100 GPU. 
+
+## Downloading Datasets
+
+### Demographic and Health Survey (DHS)
+We used the poverty indicators in the [2017 Philippine Demographic and Health Survey](https://dhsprogram.com/) as a measure of ground-truth for socioeconomic indicators. The survey is conducted every 3 to 5 years, and contains nationally representative information on different indicators across the country.
+
+Due to data access agreements, users need to independently download data files from the Demographic and Health Survey Website. This may require you to create an account and fill out a Data User Agreement form.
+
+Once downloaded, copy and unzip the file in the `/data` directory. The notebook `/notebooks/00_dhs_prep.ipynb` will walk you through how to prepare the dataset for modeling.
+
+### Google Static Maps
+We used the Google Static Maps API to download 400x400 px zoom 17 satellite images. To download satellite images and generate training/validation sets, run the following script in the src/ directory:
+
+python data_download.py
+Note that this script downloads 134,540 satellite images from Google Static Maps and may incur costs. See ]this page](https://developers.google.com/maps/documentation/maps-static/usage-and-billing#static-maps) for more information on Maps Static API Usage and Billing.
+
+To download satellite images and generate training/validation sets, run the following script in `src/`:
 ```s
-cd src
 python data_download.py
 ```
 
-To train the nighttime lights transfer learning model, run:
+## Training the Model
+To train the nighttime lights transfer learning model, run the following script in `src/`:
 ```s
-cd src
 python train.py
 ```
 
@@ -83,27 +111,11 @@ optional arguments:
   --checkpoint-dir S  model directory (default: "../models/")
 ```
 
-## Code Organization 
-
-This repository is divided into three main parts:
-- **notebooks/**: contains all Jupyter notebooks for different wealth
-    prediction models.
-- **utils/**: contains utility methods for loading datasets, building model, and
-   performing training routines. 
-- **src/**: contains the transfer learning training script.
-
-It is possible to follow our experiments and reproduce the models we've built
-by going through the notebooks one-by-one. For model training, we leveraged a
-Google Compute Engine (GCE) instance with 16 vCPUs and 60 GB of memory
-(n1-standard-16) and an NVIDIA Tesla P100 GPU. 
-
 ## Data Sources
 
-- **Demographic and Health Survey (DHS)**: we used the [2017 Philippine
+- **Demographic and Health Survey (DHS)**: we used the socioeconomic indicators in the [2017 Philippine
     Demographic and Health Survey](https://dhsprogram.com/) as our measure of
-    ground-truth for socioeconomic indicators. It is conducted every 3 to 5
-    years, and contains nationally representative information on different
-    indicators across the country. 
+    ground-truth for socioeconomic indicators. 
 - **Nighttime Luminosity Data**: we obtained nighttime lights data from the
     [Visible Infrared Imaging Radiometer Suite Day/Night Band (VIIRS
     DNB)](https://ngdc.noaa.gov/eog/viirs/download_dnb_composites.html) for the
