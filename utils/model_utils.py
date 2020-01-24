@@ -70,6 +70,7 @@ def evaluate_model(
     data,
     feature_cols,
     indicator_cols,
+    wandb,
     model_type="ridge",
     scoring={"r2": "r2"},
     refit="r2",
@@ -178,14 +179,21 @@ def evaluate_model(
                 ": %.4f" % nested_scores[score].mean(),
             )
             print(nested_scores[score])
+            if score == 'test_r2':
+                r_squared = nested_scores[score].mean()
+        
+        formatted_indicator = ' '.join([x for x in indicator.split() if '(' not in x]).title()
+        if wandb is not None:
+            wandb.log({'{} R-squared'.format(formatted_indicator): r_squared})
         
         # Plot results
         if plot:
             plot_cross_val_results(
                 y_true,
                 y_pred,
-                indicator,
+                formatted_indicator,
                 nested_scores,
+                wandb=wandb,
                 refit=refit
             )
         
@@ -454,6 +462,7 @@ def plot_cross_val_results(
     y_pred,
     indicator,
     nested_scores,
+    wandb,
     refit='r2'
 ):
     """Plots cross validated estimates.
@@ -490,6 +499,8 @@ def plot_cross_val_results(
     )
     plt.xlabel("Observed " + indicator.lower())
     plt.ylabel("Predicted " + indicator.lower())
+    if wandb is not None:
+        wandb.log({'{}'.format(indicator): wandb.Image(plt)})
     plt.show()
 
 def rf_feature_importance(
