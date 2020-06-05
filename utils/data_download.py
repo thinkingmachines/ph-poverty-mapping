@@ -132,20 +132,22 @@ def get_satellite_images_with_labels(
                     show=False
                 )
                 
-            report = {'id':[], 'lat':[], 'lon':[], 'cluster':[], 'filename':[], 'label':[]}
-            report['id'].append(id_)
-            report['cluster'].append(cluster)
-            report['lat'].append(lat)
-            report['lon'].append(lon)
-            report['filename'].append(filename)
-            report['label'].append(label[:-1])
-            report = pd.DataFrame(report)
-            report = report[['id', 'cluster', 'lat', 'lon', 'filename', 'label']]
-            
-            if not os.path.isfile(report_file):
-                report.to_csv(report_file, index=False)
-            else:
-                report.to_csv(report_file, mode='a', header=False, index=False)
+                report = {'id':[], 'lat':[], 'lon':[], 'cluster':[], 'filename':[], 'label':[]}
+                report['id'].append(id_)
+                report['cluster'].append(cluster)
+                report['lat'].append(lat)
+                report['lon'].append(lon)
+                report['filename'].append(filename)
+                report['label'].append(label[:-1])
+                report = pd.DataFrame(report)
+                report = report[['id', 'cluster', 'lat', 'lon', 'filename', 'label']]
+
+                if not os.path.isfile(report_file):
+                    report.to_csv(report_file, index=False)
+                else:
+                    report.to_csv(report_file, mode='a', header=False, index=False)
+            #else:
+            #    logger.info('{} already exists.'.format(filename))
             
         except urllib.error.HTTPError:
             logger.warn("No image for {}".format(filename))

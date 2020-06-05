@@ -10,6 +10,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+from PIL import Image
 #from google.cloud import storage
 
 import seaborn as sns
@@ -21,6 +22,7 @@ from sklearn.mixture import GaussianMixture
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
+import matplotlib.image as mpimg
 
 TM_pal_categorical_3 = ("#ef4631", "#10b9ce", "#ff9138")
 sns.set(
@@ -557,7 +559,7 @@ def balance_dataset(data, size=60000):
     return data_balanced
 
 
-def train_val_split_images(data, report, dst_dir, phase="train"):
+def train_val_split_images(data, report, dst_dir, phase="train", resize=None):
     """Splits the downloaded images into training and validation folders
         
     Parameters
@@ -597,7 +599,14 @@ def train_val_split_images(data, report, dst_dir, phase="train"):
             os.makedirs(
                 os.path.dirname(dst_file), exist_ok=True
             )
-            shutil.copyfile(src_dir, dst_file)
+            if resize == None:
+                shutil.copyfile(src_dir, dst_file)
+            else:
+                img = mpimg.imread(src_dir)
+                img_resized = np.array(
+                    Image.fromarray(img).resize((resize, resize), Image.ANTIALIAS)
+                )
+                Image.fromarray(img_resized).convert("RGB").save(dst_file)
 
 
 #### Gooogle Cloud Storage Migration Helper Functions ####

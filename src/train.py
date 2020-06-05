@@ -12,16 +12,16 @@ import transfer_utils
 from transfer_model import NTLModel
 
 SEED = 42
-IMG_DIM = (3, 400, 400)
 USE_GPU = "cuda:0" if torch.cuda.is_available() else "cpu"
 DEVICE = torch.device(USE_GPU)
  
 def main(args):  
+    IMG_DIM = (3, args.img_size, args.img_size)
     torch.manual_seed(42)
     
     # Load data
     dataloaders, dataset_sizes, class_names = transfer_utils.load_transform_data(
-        data_dir=args.data_dir, batch_size=args.batch_size
+        data_dir=args.data_dir, batch_size=args.batch_size, img_size=args.img_size
     )
     
     # Sanity check
@@ -87,6 +87,10 @@ if __name__ == "__main__":
     parser.add_argument(
         '--patience', type=int, default=10, metavar='N',
         help='number of iterations before reducing lr (default: 10)'
+    )
+    parser.add_argument(
+        '--img-size', type=int, default=400, metavar='N',
+        help='size of the image'
     )
     parser.add_argument(
         '--data-dir', type=str, default="../data/images/", metavar='S',

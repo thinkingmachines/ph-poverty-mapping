@@ -42,7 +42,7 @@ IMGNET_STD = [0.229, 0.224, 0.225]
 
 NUM_IMGS = 5
 
-def load_transform_data(data_dir="../data", batch_size=32):
+def load_transform_data(data_dir="../data", batch_size=32, img_size=400):
     """ Transforms the training and validation sets.
     Source: https://discuss.pytorch.org/t/questions-about-imagefolder/774/6 
     
@@ -65,7 +65,7 @@ def load_transform_data(data_dir="../data", batch_size=32):
     data_transforms = {
         "train": transforms.Compose(
             [
-                transforms.Resize(400),
+                transforms.Resize(img_size),
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomVerticalFlip(),
                 transforms.ToTensor(),
@@ -76,7 +76,7 @@ def load_transform_data(data_dir="../data", batch_size=32):
         ),
         "val": transforms.Compose(
             [
-                transforms.Resize(400),
+                transforms.Resize(img_size),
                 transforms.ToTensor(),
                 transforms.Normalize(
                     IMGNET_MEAN, IMGNET_STD
@@ -458,7 +458,7 @@ def visualize_model(
         model.train(mode=was_training)
 
 
-def get_embedding(img_path, model_, size=4096, gpu=False):
+def get_embedding(img_path, model_, img_size=400, size=4096, gpu=False):
     """ Returns vector embedding from PIL image
     Source: https://becominghuman.ai/extract-a-feature-vector-for-any-image-with-pytorch-9717561d1d4c
     
@@ -485,7 +485,7 @@ def get_embedding(img_path, model_, size=4096, gpu=False):
     normalize = transforms.Normalize(
         mean=IMGNET_MEAN, std=IMGNET_STD
     )
-    scaler = transforms.Resize(400)
+    scaler = transforms.Resize(img_size)
     to_tensor = transforms.ToTensor()
     image = Variable(
         normalize(to_tensor(scaler(image))).unsqueeze(0)
@@ -504,7 +504,7 @@ def get_embedding(img_path, model_, size=4096, gpu=False):
 
     return embedding.view(embedding.size(0), -1)
 
-def get_embedding_per_image(report, model):
+def get_embedding_per_image(report, model, img_size=400, size=4096,):
     """Iterates over each image and computes their corresponding feature embeddings
     
     Parameters
@@ -523,7 +523,7 @@ def get_embedding_per_image(report, model):
     embeddings = []
     for index, row in tqdm(report.iterrows(), total=len(report)):
         filename = row['filename']
-        embedding = np.array(get_embedding(filename, model, gpu=True))
+        embedding = np.array(get_embedding(filename, model, img_size=img_size, size=size, gpu=True))
         embeddings.append(embedding[0]) 
         
     report['embeddings'] = embeddings
