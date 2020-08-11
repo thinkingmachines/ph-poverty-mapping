@@ -8,3 +8,4 @@ torch
 tqdm
 google-cloud-storage
 ipykernel
+Pillow>=7.1.0
