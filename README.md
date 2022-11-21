@@ -1,3 +1,4 @@
+<h1>This repo is no longer maintained. Checkout our latest poverty mapping repo <a href="https://github.com/thinkingmachines/unicef-ai4d-poverty-mapping">here!</h1>
 <p align="center">
 <b><a href="#setup">Setup</a></b>
 |
